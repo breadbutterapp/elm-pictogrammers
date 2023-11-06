@@ -45,6 +45,7 @@ fileToDeclaration file =
             (\path ->
                 Elm.declaration (getFileSimpleName file.path) (StyledSvg.path [ StyledSvgAttrs.d path ] [])
                     |> Elm.withDocumentation ("Return a styled Svg path for an " ++ getFileSimpleName file.path ++ " icon, in a 24x24 viewbox.")
+                    |> Elm.expose
             )
 
 
