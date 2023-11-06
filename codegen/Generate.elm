@@ -63,10 +63,6 @@ extractPath file =
             Nothing
 
 
-
-{- Some string formatting -}
-
-
 getFileSimpleName : String -> String
 getFileSimpleName path =
     String.split "/" path
