@@ -25,7 +25,7 @@ readFilesRecursively(directoryPath)
 
 CodeGen.run("Generate.elm", {
   debug: true,
-  output: "generated",
+  output: "src",
   flags: found,
   cwd: "./codegen",
 })
