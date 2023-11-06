@@ -4,12 +4,14 @@
   "description": "Icons from Pictogrammers, in Elm.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "generate": "ts-node ./scripts/generate.ts"
   },
   "author": "Alexandre Piveteau",
   "license": "MIT",
   "devDependencies": {
     "elm": "^0.19.1-6",
-    "elm-codegen": "^0.5.0"
+    "elm-codegen": "^0.5.0",
+    "elm-format": "^0.8.7",
+    "ts-node": "^10.9.1"
   }
 }
