@@ -63,23 +63,6 @@ extractPath file =
             Nothing
 
 
-{-|
-
-> Result.toMaybe
-
-        |> Maybe.andThen
-            (\node ->
-                case node of
-                    [ Html.Parser.Element x _ _ ] ->
-                        Just x
-
-                    _ ->
-                        Just "invalid svg"
-            )
-
--}
-
-
 
 {- Some string formatting -}
 
