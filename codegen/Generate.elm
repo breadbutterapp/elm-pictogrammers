@@ -4,6 +4,8 @@ module Generate exposing (main)
 
 import Elm
 import Gen.CodeGen.Generate as Generate
+import Gen.Svg.Styled as StyledSvg
+import Gen.Svg.Styled.Attributes as StyledSvgAttrs
 import Json.Decode
 
 
@@ -29,46 +31,65 @@ decodeFile =
 
 generate : List File -> List Elm.File
 generate files =
-    [ Elm.file [ "Assets" ]
-        (List.map fileToDeclaration files)
+    [ Elm.file [ "Pictogrammers" ]
+        (List.sortBy .path files
+            |> List.filterMap fileToDeclaration
+        )
     ]
 
 
-fileToDeclaration : File -> Elm.Declaration
+fileToDeclaration : File -> Maybe Elm.Declaration
 fileToDeclaration file =
-    Elm.declaration (getFileName file.path)
-        (Elm.string file.path)
+    extractPath file
+        |> Maybe.map
+            (\path ->
+                Elm.declaration (getFileSimpleName file.path) (StyledSvg.path [ StyledSvgAttrs.d path ] [])
+                    |> Elm.withDocumentation ("Return a styled Svg path for an " ++ getFileSimpleName file.path ++ " icon, in a 24x24 viewbox.")
+            )
+
+
+extractPath : File -> Maybe String
+extractPath file =
+    case String.split " d=\"" file.contents of
+        [ _, rest ] ->
+            case String.split "\"" rest of
+                path :: _ ->
+                    Just path
+
+                _ ->
+                    Nothing
+
+        _ ->
+            Nothing
+
+
+{-|
+
+> Result.toMaybe
+
+        |> Maybe.andThen
+            (\node ->
+                case node of
+                    [ Html.Parser.Element x _ _ ] ->
+                        Just x
+
+                    _ ->
+                        Just "invalid svg"
+            )
+
+-}
 
 
 
 {- Some string formatting -}
 
 
-getFileName : String -> String
-getFileName path =
-    let
-        fileName =
-            String.split "/" path
-                |> List.reverse
-                |> List.head
-                |> Maybe.withDefault path
-    in
-    fileName
-        |> String.replace "." ""
-        |> String.replace "-" ""
-        |> String.replace "_" ""
-        |> String.replace " " ""
-        |> String.replace "/" ""
-        |> String.replace "’" ""
-        |> String.replace "'" ""
-        |> decapitalize
-
-
-decapitalize : String -> String
-decapitalize str =
-    case String.uncons str of
-        Nothing ->
-            str
-
-        Just ( first, tail ) ->
-            String.fromChar (Char.toLower first) ++ tail
+getFileSimpleName : String -> String
+getFileSimpleName path =
+    String.split "/" path
+        |> List.reverse
+        |> List.head
+        |> Maybe.withDefault path
+        |> String.replace ".svg" ""
+        |> String.replace "-" "_"
+        |> String.toLower
